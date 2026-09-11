@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teman Gusty</title>
+    <style>
+        :root {
+            --primary-yellow: #FFD700;
+            --secondary-green: #004D40;
+            --accent-maroon: #800000;
+            --bg-light: #F4F6F5;
+            --text-dark: #333333;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--secondary-green);
+            color: var(--text-dark);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 480px;
+            background-color: var(--bg-light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        header {
+            background-color: var(--secondary-green);
+            color: var(--primary-yellow);
+            padding: 16px;
+            text-align: center;
+            font-size: 1.25rem;
+            font-weight: bold;
+            border-bottom: 4px solid var(--accent-maroon);
+        }
+
+        .screen {
+            display: none;
+            flex: 1;
+            flex-direction: column;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        /* Login Screen */
+        #login-screen {
+            justify-content: center;
+            align-items: center;
+            background-color: var(--secondary-green);
+            color: var(--primary-yellow);
+        }
+
+        .login-box {
+            width: 100%;
+            max-width: 320px;
+            text-align: center;
+        }
+
+        .login-box h1 {
+            margin-bottom: 24px;
+            color: var(--primary-yellow);
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 12px;
+            border: 2px solid var(--secondary-green);
+            border-radius: 8px;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary-yellow);
+            color: var(--accent-maroon);
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-bottom: 8px;
+            transition: opacity 0.2s;
+        }
+
+        button:active {
+            opacity: 0.8;
+        }
+
+        .btn-maroon {
+            background-color: var(--accent-maroon);
+            color: white;
+        }
+
+        /* Navigation Menu Grid */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .menu-card {
+            background-color: white;
+            padding: 16px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            cursor: pointer;
+            border-left: 5px solid var(--secondary-green);
+        }
+
+        .menu-card h3 {
+            font-size: 0.95rem;
+            color: var(--secondary-green);
+        }
+
+        /* Chat Screen */
+        .chat-box {
+            flex: 1;
+            background: white;
+            border-radius: 8px;
+            padding: 10px;
+            overflow-y: auto;
+            margin-bottom: 10px;
+            max-height: 350px;
+            border: 1px solid #ccc;
+        }
+
+        .chat-message {
+            margin-bottom: 10px;
+            padding: 8px;
+            background: #eef2f1;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .chat-message span {
+            font-weight: bold;
+            color: var(--accent-maroon);
+            display: block;
+            font-size: 0.8rem;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            background: white;
+            border-radius: 6px;
+            overflow: hidden;
+            font-size: 0.9rem;
+        }
+
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background-color: var(--secondary-green);
+            color: var(--primary-yellow);
+        }
+
+        .back-btn {
+            background-color: var(--accent-maroon);
+            color: white;
+            margin-top: auto;
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    
+    <!-- 1. LOGIN SCREEN -->
+    <div id="login-screen" class="screen active">
+        <div class="login-box">
+            <h1>Teman Gusty</h1>
+            <input type="text" id="username" placeholder="Masukkan Nama Lengkap">
+            <select id="role-select">
+                <option value="anggota">Anggota Biasa</option>
+                <option value="owner">Pemilik Aplikasi (Owner)</option>
+                <option value="ketua">Ketua Grup</option>
+            </select>
+            <button onclick="loginApp()">Masuk Aplikasi</button>
+        </div>
+    </div>
+
+    <!-- MAIN HOME / MENU SCREEN -->
+    <div id="home-screen" class="screen">
+        <header>Menu Utama - Teman Gusty</header>
+        <div style="padding: 15px 0;">
+            <p id="welcome-msg" style="margin-bottom: 15px; font-weight: bold; color: var(--secondary-green);"></p>
+            <div class="menu-grid">
+                <div class="menu-card" onclick="switchScreen('profile-screen')">
+                    <h3>2. Profil & Beranda</h3>
+                </div>
+                <div class="menu-card" onclick="switchScreen('chat-screen')">
+                    <h3>3. Chat & Media</h3>
+                </div>
+                <div class="menu-card" onclick="switchScreen('call-screen')">
+                    <h3>4. Panggilan / Video Call</h3>
+                </div>
+                <div class="menu-card" onclick="switchScreen('tour-screen')">
+                    <h3>5. Wisata & Keuangan</h3>
+                </div>
+                <div class="menu-card" onclick="switchScreen('kas-screen')">
+                    <h3>6. Iuran & Kas</h3>
+                </div>
+                <div class="menu-card" onclick="switchScreen('donation-screen')">
+                    <h3>7. Donasi Grup</h3>
+                </div>
+                <div class="menu-card" onclick="switchScreen('management-screen')" style="grid-column: span 2;">
+                    <h3>8. Kepengurusan (Akses Owner)</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. PROFIL SCREEN -->
+    <div id="profile-screen" class="screen">
+        <header>Profil Anggota</header>
+        <div style="margin-top: 15px;">
+            <label>Nama Lengkap</label>
+            <input type="text" id="prof-nama" value="Gusty User">
+            <label>Nama Panggilan</label>
+            <input type="text" id="prof-panggilan" value="Gusty">
+            <label>Pekerjaan</label>
+            <input type="text" id="prof-pekerjaan" value="Developer">
+            <label>Riwayat / Bio</label>
+            <textarea id="prof-riwayat">Anggota aktif komunitas Teman Gusty.</textarea>
+            <button onclick="alert('Profil berhasil disimpan!')">Simpan Perubahan</button>
+        </div>
+        <button class="back-btn" onclick="switchScreen('home-screen')">Kembali ke Menu</button>
+    </div>
+
+    <!-- 3. CHAT SCREEN -->
+    <div id="chat-screen" class="screen">
+        <header>Grup Chat & Media</header>
+        <div class="chat-box" id="chat-container">
+            <div class="chat-message"><span>Sistem</span>Selamat datang di grup chat Teman Gusty! Anggota bisa mengirim teks, foto, atau video.</div>
+        </div>
+        <input type="text" id="chat-input" placeholder="Tulis pesan...">
+        <button onclick="sendMessage()">Kirim Pesan</button>
+        <button class="back-btn" onclick="switchScreen('home-screen')">Kembali ke Menu</button>
+    </div>
+
+    <!-- 4. PANGGILAN SCREEN -->
+    <div id="call-screen" class="screen">
+        <header>Panggilan & Video Call</header>
+        <div style="text-align: center; margin-top: 40px;">
+            <p style="margin-bottom: 20px; color: var(--secondary-green); font-weight: bold;">Gunakan fitur ini untuk komunikasi suara/video langsung.</p>
+            <button onclick="alert('Memulai Panggilan Suara...')">Mulai Panggilan Suara</button>
+            <button class="btn-maroon" onclick="alert('Memulai Video Call...')">Mulai Video Call</button>
+        </div>
+        <button class="back-btn" onclick="switchScreen('home-screen')" style="margin-top: auto;">Kembali ke Menu</button>
+    </div>
+
+    <!-- 5. WISATA & KEUANGAN SCREEN -->
+    <div id="tour-screen" class="screen">
+        <header>Wisata & Keuangan</header>
+        <div style="margin-top: 10px;">
+            <h4 style="color: var(--secondary-green);">Tujuan & Itinerary:</h4>
+            <p style="font-size: 0.9rem; margin-bottom: 10px; background: white; padding: 8px; border-radius: 5px;">Pantai Indah - Berangkat 25 Juli 2026. Berkumpul pukul 07.00 WIB.</p>
+            <h4 style="color: var(--secondary-green);">Anggaran & Pengeluaran:</h4>
+            <table>
+                <tr><th>Keperluan</th><th>Estimasi Biaya</th></tr>
+                <tr><td>Transportasi Bus</td><td>Rp 1.500.000</td></tr>
+                <tr><td>Konsumsi</td><td>Rp 750.000</td></tr>
+            </table>
+        </div>
+        <button class="back-btn" onclick="switchScreen('home-screen')">Kembali ke Menu</button>
+    </div>
+
+    <!-- 6. KAS & IURAN SCREEN -->
+    <div id="kas-screen" class="screen">
+        <header>Iuran & Kas Anggota</header>
+        <table>
+            <tr>
+                <th>Nama</th>
+                <th>Jumlah</th>
+                <th>Waktu</th>
+            </tr>
+            <tr>
+                <td>Budi Santoso</td>
+                <td>Rp 50.000</td>
+                <td>01/06/2026</td>
+            </tr>
+            <tr>
+                <td>Siti Aminah</td>
+                <td>Rp 50.000</td>
+                <td>02/06/2026</td>
+            </tr>
+        </table>
+        <button class="back-btn" onclick="switchScreen('home-screen')" style="margin-top: auto;">Kembali ke Menu</button>
+    </div>
+
+    <!-- 7. DONASI SCREEN -->
+    <div id="donation-screen" class="screen">
+        <header>Donasi Grup</header>
+        <div style="margin-top: 10px;">
+            <div style="background: white; padding: 10px; border-radius: 6px; margin-bottom: 10px;">
+                <strong>Tujuan Donasi (Oleh Ketua):</strong>
+                <p id="donation-goal" style="font-size: 0.9rem; color: var(--accent-maroon);">Pembangunan Fasilitas Silahturahmi Warga.</p>
+            </div>
+            <table>
+                <tr>
+                    <th>Donatur</th>
+                    <th>Jumlah</th>
+                    <th>Waktu</th>
+                </tr>
+                <tr>
+                    <td>Hamba Allah</td>
+                    <td>Rp 200.000</td>
+                    <td>03/06/2026</td>
+                </tr>
+            </table>
+        </div>
+        <button class="back-btn" onclick="switchScreen('home-screen')" style="margin-top: auto;">Kembali ke Menu</button>
+    </div>
+
+    <!-- 8. KEPENGURUSAN SCREEN -->
+    <div id="management-screen" class="screen">
+        <header>Struktur Kepengurusan</header>
+        <div style="margin-top: 10px;">
+            <p style="font-size: 0.85srem; color: var(--accent-maroon); margin-bottom: 10px;" id="owner-warning">*Hanya Pemilik Aplikasi yang dapat mengubah data ini.</p>
+            
+            <label>Ketua Grup</label>
+            <input type="text" id="m-ketua" value="Ahmad Gusty" disabled>
+            
+            <label>Wakil Ketua</label>
+            <input type="text" id="m-wakil" value="Rian Pratama" disabled>
+            
+            <label>Bendahara 1</label>
+            <input type="text" id="m-bendum1" value="Dewi Lestari" disabled>
+            
+            <label>Bendahara 2</label>
+            <input type="text" id="m-bendum2" value="Sari Melati" disabled>
+
+            <button id="save-mgmt-btn" style="display:none;" onclick="alert('Data kepengurusan diperbarui!')">Simpan Perubahan (Owner)</button>
+        </div>
+        <button class="back-btn" onclick="switchScreen('home-screen')">Kembali ke Menu</button>
+    </div>
+
+</div>
+
+<script>
+    function loginApp() {
+        const username = document.getElementById('username').value;
+        const role = document.getElementById('role-select').value;
+        
+        if(!username) {
+            alert('Silakan masukkan nama terlebih dahulu!');
+            return;
+        }
+
+        document.getElementById('welcome-msg').innerText = `Halo, ${username} (${role.toUpperCase()})`;
+        
+        // Atur akses kepengurusan khusus owner
+        if(role === 'owner') {
+            document.getElementById('m-ketua').disabled = false;
+            document.getElementById('m-wakil').disabled = false;
+            document.getElementById('m-bendum1').disabled = false;
+            document.getElementById('m-bendum2').disabled = false;
+            document.getElementById('save-mgmt-btn').style.display = 'block';
+            document.getElementById('owner-warning').innerText = 'Anda login sebagai Owner (Dapat mengubah data kepengurusan).';
+        } else {
+            document.getElementById('m-ketua').disabled = true;
+            document.getElementById('m-wakil').disabled = true;
+            document.getElementById('m-bendum1').disabled = true;
+            document.getElementById('m-bendum2').disabled = true;
+            document.getElementById('save-mgmt-btn').style.display = 'none';
+            document.getElementById('owner-warning').innerText = '*Hanya Pemilik Aplikasi yang dapat mengubah data ini.';
+        }
+
+        switchScreen('home-screen');
+    }
+
+    function switchScreen(screenId) {
+        const screens = document.querySelectorAll('.screen');
+        screens.forEach(screen => screen.classList.remove('active'));
+        document.getElementById(screenId).classList.add('active');
+    }
+
+    function sendMessage() {
+        const input = document.getElementById('chat-input');
+        const container = document.getElementById('chat-container');
+        
+        if(!input.value) return;
+
+        const msgDiv = document.createElement('div');
+        msgDiv.className = 'chat-message';
+        msgDiv.innerHTML = `<span>Anda</span>${input.value}`;
+        
+        container.appendChild(msgDiv);
+        input.value = '';
+        container.scrollTop = container.scrollHeight;
+    }
+</script>
+
+</body>
+</html>
