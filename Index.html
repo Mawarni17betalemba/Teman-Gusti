@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teman Gusti - Login</title>
+  <style>
+    body { font-family: sans-serif; background-color: #FFFDE7; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+    .card { background: white; padding: 30px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 360px; border-top: 8px solid #2E7D32; text-align: center; }
+    h2 { color: #800020; margin-bottom: 20px; }
+    input { width: 100%; padding: 12px; margin: 8px 0; border: 1.5px solid #E0E0E0; border-radius: 8px; box-sizing: border-box; font-size: 14px; }
+    input:focus { border-color: #2E7D32; outline: none; }
+    button { width: 100%; padding: 12px; background-color: #FBC02D; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; color: #800020; font-size: 15px; margin-top: 10px; }
+    button:hover { background-color: #F9A825; }
+    .error { color: #D32F2F; font-size: 13px; margin: 10px 0; display: none; text-align: left; }
+    .toggle-btn { background: none; border: none; color: #2E7D32; font-weight: bold; margin-top: 15px; cursor: pointer; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Teman Gusti 🏡</h2>
+    <input type="email" id="email" placeholder="Alamat Email" required>
+    <input type="password" id="password" placeholder="Password (min. 6 karakter)" required>
+    <div class="error" id="error-msg"></div>
+    <button id="btn-primary" onclick="handleAuth('login')">Masuk</button>
+    <button class="toggle-btn" id="btn-toggle" onclick="toggleMode()">Daftar Akun Baru</button>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+    // TODO: Ganti dengan konfigurasi asli dari Firebase Console Anda
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "teman-gusti.firebaseapp.com",
+      projectId: "teman-gusti",
+      appId: "YOUR_APP_ID"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    let isLoginMode = true;
+
+    window.toggleMode = () => {
+      isLoginMode = !isLoginMode;
+      document.getElementById('btn-primary').innerText = isLoginMode ? 'Masuk' : 'Daftar';
+      document.getElementById('btn-toggle').innerText = isLoginMode ? 'Daftar Akun Baru' : 'Sudah punya akun? Masuk';
+    };
+
+    window.handleAuth = async () => {
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const errorDiv = document.getElementById('error-msg');
+      errorDiv.style.display = 'none';
+
+      if (!email || !password || password.length < 6) {
+        errorDiv.innerText = "Email wajib diisi & password minimal 6 karakter.";
+        errorDiv.style.display = 'block';
+        return;
+      }
+
+      try {
+        if (isLoginMode) {
+          await signInWithEmailAndPassword(auth, email, password);
+          alert("Login sukses! Selamat datang kembali di Teman Gusti.");
+        } else {
+          await createUserWithEmailAndPassword(auth, email, password);
+          alert("Pendaftaran sukses! Akun baru berhasil dibuat.");
+        }
+      } catch (error) {
+        errorDiv.innerText = mapError(error.code);
+        errorDiv.style.display = 'block';
+      }
+    };
+
+    function mapError(code) {
+      switch (code) {
+        case 'auth/invalid-credential': return 'Email atau password salah.';
+        case 'auth/email-already-in-use': return 'Email ini sudah terdaftar.';
+        case 'auth/weak-password': return 'Password terlalu lemah (min. 6 karakter).';
+        default: return 'Terjadi kesalahan. Silakan coba lagi.';
+      }
+    }
+  </script>
+</body>
+</html>
